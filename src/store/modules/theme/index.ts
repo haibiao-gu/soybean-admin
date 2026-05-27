@@ -1,19 +1,12 @@
-import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue';
-import type { Ref } from 'vue';
+import { SetupStoreId } from '@/enum';
+import { localStg } from '@/utils/storage';
+import { getPaletteColorByNumber } from '@sa/color';
 import { useDateFormat, useEventListener, useNow, usePreferredColorScheme } from '@vueuse/core';
 import { defineStore } from 'pinia';
-import { getPaletteColorByNumber } from '@sa/color';
-import { localStg } from '@/utils/storage';
-import { SetupStoreId } from '@/enum';
+import type { Ref } from 'vue';
+import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue';
 import { useAuthStore } from '../auth';
-import {
-  addThemeVarsToGlobal,
-  createThemeToken,
-  getNaiveTheme,
-  initThemeSettings,
-  toggleAuxiliaryColorModes,
-  toggleCssDarkMode
-} from './shared';
+import { addThemeVarsToGlobal, createThemeToken, getNaiveTheme, initThemeSettings, toggleAuxiliaryColorModes, toggleCssDarkMode } from './shared';
 
 /** Theme store */
 export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
@@ -224,10 +217,6 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** Cache theme settings */
   function cacheThemeSettings() {
-    const isProd = import.meta.env.PROD;
-
-    if (!isProd) return;
-
     localStg.set('themeSettings', settings.value);
   }
 
