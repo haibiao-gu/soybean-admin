@@ -1,7 +1,72 @@
+import { fetchRefreshToken } from '@/service/api/auth';
 import { useAuthStore } from '@/store/modules/auth';
 import { localStg } from '@/utils/storage';
-import { fetchRefreshToken } from '../api';
 import type { RequestInstanceState } from './type';
+
+const ACTIVITY_INTERVAL = 10 * 60 * 1000;
+
+type ActivityListener = (isActivity: boolean) => void;
+
+let listeners: ActivityListener[] = [];
+
+export function initActivityMonitor(state: RequestInstanceState) {
+  state.lastActiveTime = Date.now();
+  state.activityTimer = null;
+
+  startActivityMonitor(state);
+}
+
+function startActivityMonitor(state: RequestInstanceState) {
+  if (state.activityTimer) {
+    clearTimeout(state.activityTimer);
+  }
+
+  state.activityTimer = setTimeout(() => {
+    const timeSinceLastActive = Date.now() - state.lastActiveTime;
+
+    if (timeSinceLastActive >= ACTIVITY_INTERVAL) {
+      console.log('[Activity Monitor] User inactive, notifying listeners');
+      notifyListeners(false);
+      state.activityTimer = null;
+      return;
+    }
+
+    startActivityMonitor(state);
+  }, ACTIVITY_INTERVAL);
+}
+
+export function updateActivityTime(state: RequestInstanceState, isUserActivity = true) {
+  if (!isUserActivity) {
+    return;
+  }
+
+  const wasInactive = !state.activityTimer;
+  state.lastActiveTime = Date.now();
+
+  if (wasInactive) {
+    notifyListeners(true);
+  }
+
+  startActivityMonitor(state);
+}
+
+export function onActivityChange(listener: ActivityListener) {
+  listeners.push(listener);
+
+  return () => {
+    listeners = listeners.filter(l => l !== listener);
+  };
+}
+
+function notifyListeners(isActivity: boolean) {
+  listeners.forEach(listener => {
+    try {
+      listener(isActivity);
+    } catch (error) {
+      console.error('[Activity Monitor] Listener error:', error);
+    }
+  });
+}
 
 export function getAuthorization() {
   const token = localStg.get('token');

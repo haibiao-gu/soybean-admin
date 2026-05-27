@@ -3,5 +3,8 @@ export interface RequestInstanceState {
   refreshTokenPromise: Promise<boolean> | null;
   /** the request error message stack */
   errMsgStack: string[];
+  lastActiveTime: number;
+  activityTimer: ReturnType<typeof setTimeout> | null;
+
   [key: string]: unknown;
 }
