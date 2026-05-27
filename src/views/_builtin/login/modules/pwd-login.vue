@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import { computed, reactive } from 'vue';
+<script lang="ts" setup>
 import { loginModuleRecord } from '@/constants/app';
-import { useAuthStore } from '@/store/modules/auth';
-import { useRouterPush } from '@/hooks/common/router';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
+import { useRouterPush } from '@/hooks/common/router';
 import { $t } from '@/locales';
+import { useAuthStore } from '@/store/modules/auth';
+import { computed, reactive } from 'vue';
 
 defineOptions({
   name: 'PwdLogin'
@@ -20,7 +20,7 @@ interface FormModel {
 }
 
 const model: FormModel = reactive({
-  userName: 'Soybean',
+  userName: 'admin',
   password: '123456'
 });
 
@@ -75,33 +75,33 @@ async function handleAccountLogin(account: Account) {
 </script>
 
 <template>
-  <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false" @keyup.enter="handleSubmit">
+  <NForm ref="formRef" :model="model" :rules="rules" :show-label="false" size="large" @keyup.enter="handleSubmit">
     <NFormItem path="userName">
       <NInput v-model:value="model.userName" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
     <NFormItem path="password">
       <NInput
         v-model:value="model.password"
-        type="password"
-        show-password-on="click"
         :placeholder="$t('page.login.common.passwordPlaceholder')"
+        show-password-on="click"
+        type="password"
       />
     </NFormItem>
-    <NSpace vertical :size="24">
+    <NSpace :size="24" vertical>
       <div class="flex-y-center justify-between">
         <NCheckbox>{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
         <NButton quaternary @click="toggleLoginModule('reset-pwd')">
           {{ $t('page.login.pwdLogin.forgetPassword') }}
         </NButton>
       </div>
-      <NButton type="primary" size="large" round block :loading="authStore.loginLoading" @click="handleSubmit">
+      <NButton :loading="authStore.loginLoading" block round size="large" type="primary" @click="handleSubmit">
         {{ $t('common.confirm') }}
       </NButton>
       <div class="flex-y-center justify-between gap-12px">
-        <NButton class="flex-1" block @click="toggleLoginModule('code-login')">
+        <NButton block class="flex-1" @click="toggleLoginModule('code-login')">
           {{ $t(loginModuleRecord['code-login']) }}
         </NButton>
-        <NButton class="flex-1" block @click="toggleLoginModule('register')">
+        <NButton block class="flex-1" @click="toggleLoginModule('register')">
           {{ $t(loginModuleRecord.register) }}
         </NButton>
       </div>
