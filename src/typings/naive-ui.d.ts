@@ -11,7 +11,19 @@ declare namespace NaiveUI {
 
   type SetTableColumnKey<C, T> = Omit<C, 'key'> & { key: keyof T | (string & {}) };
 
-  type TableColumnWithKey<T> = SetTableColumnKey<DataTableBaseColumn<T>, T> | SetTableColumnKey<TableColumnGroup<T>, T>;
+  type TableColumnWithKey<T> = (SetTableColumnKey<DataTableBaseColumn<T>, T> | SetTableColumnKey<TableColumnGroup<T>, T>) & {
+    /**
+     * whether to show the column by default
+     *
+     * @default true
+     */
+    defaultShow?: boolean;
+    /**
+     * transformer function for exporting data to Excel
+     * used to convert raw values to display values
+     */
+    exportTransformer?: (row: T) => any;
+  };
 
   type TableColumn<T> = TableColumnWithKey<T> | DataTableSelectionColumn<T> | DataTableExpandColumn<T>;
 
