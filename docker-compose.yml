@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  dsjy:
+    image: soybean-admin:v1.0.0
+    container_name: soybean-admin
+    ports:
+      - "28080:80"
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - 1panel-network
+    restart:
+      always
+
+networks:
+  1panel-network:
+    external: true
