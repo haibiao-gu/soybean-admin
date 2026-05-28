@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
 import TableColumnOperation from '@/components/advanced/table-column-operation.vue';
 import { statusRecord, statusTagMapRecord } from '@/constants/common';
+import { useAuth } from "@/hooks/business/auth";
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
 import { fetchDeleteSysUser, fetchSysUserPage } from '@/service/api/sys/user';
@@ -12,6 +13,7 @@ import { reactive } from 'vue';
 import UserOperate from './modules/user-operate.vue';
 import UserSearch from './modules/user-search.vue';
 
+const { hasAuth } = useAuth()
 const appStore = useAppStore();
 const sysStore = useSysStore()
 
@@ -104,7 +106,12 @@ const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagi
         align: 'center',
         width: 130,
         render: row => (
-          <TableColumnOperation showEdit showDelete onEdit={() => edit(row.id)} onDelete={() => handleDelete(row.id)} />
+          <TableColumnOperation
+            showEdit
+            showDelete={hasAuth('sys:user:delete')}
+            onEdit={() => edit(row.id)}
+            onDelete={() => handleDelete(row.id)}
+          />
         )
       }
     ]
@@ -149,6 +156,8 @@ function edit(id: string) {
           v-model:columns="columnChecks"
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
+          :show-add="hasAuth('sys:user:add')"
+          :show-delete="hasAuth('sys:user:delete')"
           @add="handleAdd"
           @delete="handleBatchDelete"
           @refresh="getData"
