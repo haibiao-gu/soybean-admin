@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import OperateButtons from '@/components/advanced/operate-buttons.vue';
+import { useAuth } from "@/hooks/business/auth";
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { fetchInsertSysRole, fetchSysRole, fetchUpdateSysRole } from '@/service/api/sys/role';
-import type { SysRoleMenuType, SysRoleParams, SysRoleType } from '@/typings/sys/role';
+import type { SysRoleMenuType, SysRoleParams, SysRolePermissionType, SysRoleType } from '@/typings/sys/role';
 import { computed, ref, watch } from 'vue';
 import { useBoolean } from "~/packages/hooks";
 import SysRoleMenuTree from "./sys-role-menu-tree.vue";
@@ -31,6 +32,7 @@ const visible = defineModel<boolean>('visible', {
   default: false
 });
 
+const { hasAuth } = useAuth()
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
@@ -48,6 +50,7 @@ type Model = Pick<SysRoleParams,
   | 'description'
 > & {
   menus: SysRoleMenuType[];
+  permissions: SysRolePermissionType[];
 };
 
 const model = ref(createDefaultModel());
@@ -58,6 +61,7 @@ function createDefaultModel(): Model {
     roleCode: null, // 角色编码
     description: null, // 角色描述
     menus: [],
+    permissions: []
   };
 }
 
@@ -110,9 +114,14 @@ watch(visible, () => {
 
 const { bool: roleMenuVisible, setTrue: openRoleMenu } = useBoolean();
 
-function handleRoleMenuSubmitted(val: SysRoleMenuType[]) {
-  model.value.menus = val;
+function handleRoleMenuSubmitted(val: { menus: SysRoleMenuType[], permissions: SysRolePermissionType[] }) {
+  model.value.menus = val.menus;
+  model.value.permissions = val.permissions;
 }
+
+const hasPermission = computed(() => {
+  return props.operateType === 'edit' ? !hasAuth('sys:role:edit') : !hasAuth('sys:role:add')
+})
 
 </script>
 
@@ -138,7 +147,7 @@ function handleRoleMenuSubmitted(val: SysRoleMenuType[]) {
       </NFormItem>
     </NForm>
     <template #footer>
-      <OperateButtons @cancel="closeOperate" @confirm="handleSubmit">
+      <OperateButtons :hide-confirm="hasPermission" @cancel="closeOperate" @confirm="handleSubmit">
         <template #prefix>
           <NButton @click="openRoleMenu">
             {{ $t('配置菜单') }}
@@ -146,7 +155,7 @@ function handleRoleMenuSubmitted(val: SysRoleMenuType[]) {
         </template>
       </OperateButtons>
     </template>
-    <SysRoleMenuTree v-model:visible="roleMenuVisible" :active-menus="model.menus" :role-id="rowId" @submitted="handleRoleMenuSubmitted" />
+    <SysRoleMenuTree v-model:visible="roleMenuVisible" :active-menus="model.menus" :active-permissions="model.permissions" :role-id="rowId" @submitted="handleRoleMenuSubmitted" />
   </NModal>
 </template>
 

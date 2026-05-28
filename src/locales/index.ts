@@ -1,13 +1,16 @@
+import { localStg } from '@/utils/storage';
 import type { App } from 'vue';
 import { createI18n } from 'vue-i18n';
-import { localStg } from '@/utils/storage';
 import messages from './locale';
 
 const i18n = createI18n({
   locale: localStg.get('lang') || 'zh-CN',
-  fallbackLocale: 'en',
   messages,
-  legacy: false
+  legacy: false,
+  missing: (_locale, key) => {
+    // 返回默认值（避免页面显示空值）
+    return key;
+  }
 });
 
 /**

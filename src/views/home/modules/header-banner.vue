@@ -1,8 +1,8 @@
-<script setup lang="ts">
-import { computed } from 'vue';
+<script lang="ts" setup>
+import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
-import { $t } from '@/locales';
+import { computed } from 'vue';
 
 defineOptions({
   name: 'HeaderBanner'
@@ -40,15 +40,15 @@ const statisticData = computed<StatisticData[]>(() => [
 
 <template>
   <NCard :bordered="false" class="card-wrapper">
-    <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>
+    <NGrid :x-gap="gap" :y-gap="16" item-responsive responsive="screen">
       <NGi span="24 s:24 m:18">
         <div class="flex-y-center">
           <div class="size-72px shrink-0 overflow-hidden rd-1/2">
-            <img src="@/assets/imgs/soybean.jpg" class="size-full" />
+            <img class="size-full" src="@/assets/imgs/soybean.jpg" />
           </div>
           <div class="pl-12px">
             <h3 class="text-18px font-semibold">
-              {{ $t('page.home.greeting', { userName: authStore.userInfo.userName }) }}
+              {{ $t('page.home.greeting', { userName: authStore.userInfo.nickname }) }}
             </h3>
             <p class="text-#999 leading-30px">{{ $t('page.home.weatherDesc') }}</p>
           </div>

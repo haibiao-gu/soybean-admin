@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import { computed } from 'vue';
-import type { VNode } from 'vue';
-import { useAuthStore } from '@/store/modules/auth';
-import { useRouterPush } from '@/hooks/common/router';
+<script lang="ts" setup>
 import { useSvgIcon } from '@/hooks/common/icon';
+import { useRouterPush } from '@/hooks/common/router';
 import { $t } from '@/locales';
+import { useAuthStore } from '@/store/modules/auth';
+import type { VNode } from 'vue';
+import { computed } from 'vue';
 
 defineOptions({
   name: 'UserAvatar'
@@ -22,14 +22,14 @@ type DropdownKey = 'logout';
 
 type DropdownOption =
   | {
-      key: DropdownKey;
-      label: string;
-      icon?: () => VNode;
-    }
+  key: DropdownKey;
+  label: string;
+  icon?: () => VNode;
+}
   | {
-      type: 'divider';
-      key: string;
-    };
+  type: 'divider';
+  key: string;
+};
 
 const options = computed(() => {
   const opts: DropdownOption[] = [
@@ -69,11 +69,11 @@ function handleDropdown(key: DropdownKey) {
   <NButton v-if="!authStore.isLogin" quaternary @click="loginOrRegister">
     {{ $t('page.login.common.loginOrRegister') }}
   </NButton>
-  <NDropdown v-else placement="bottom" trigger="click" :options="options" @select="handleDropdown">
+  <NDropdown v-else :options="options" placement="bottom" trigger="click" @select="handleDropdown">
     <div>
       <ButtonIcon>
-        <SvgIcon icon="ph:user-circle" class="text-icon-large" />
-        <span class="text-16px font-medium">{{ authStore.userInfo.userName }}</span>
+        <SvgIcon class="text-icon-large" icon="ph:user-circle" />
+        <span class="text-16px font-medium">{{ authStore.userInfo.nickname }}</span>
       </ButtonIcon>
     </div>
   </NDropdown>

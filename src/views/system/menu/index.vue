@@ -2,6 +2,7 @@
 import TableColumnOperation from '@/components/advanced/table-column-operation.vue';
 import { statusRecord, statusTagMapRecord, yesOrNoRecord, yesOrNoTagMapRecord } from "@/constants/common";
 import { menuTypeRecord, menuTypeTagMapRecord } from "@/constants/menu";
+import { useAuth } from "@/hooks/business/auth";
 import { useNaiveTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
 import { fetchDeleteSysMenu, fetchSysMenuTree } from '@/service/api/sys/menu';
@@ -11,6 +12,7 @@ import { ref } from "vue";
 import type { OperateType } from "./modules/sys-menu-operate.vue";
 import SysMenuOperate from "./modules/sys-menu-operate.vue";
 
+const { hasAuth } = useAuth()
 const appStore = useAppStore();
 
 const { columns, columnChecks, data: tableData, getData, loading, scrollX } =
@@ -99,11 +101,12 @@ const { columns, columnChecks, data: tableData, getData, loading, scrollX } =
         render: row => (
           <TableColumnOperation
             justify="end"
-            showEdit showDelete
+            showEdit
+            showDelete={hasAuth('sys:menu:delete')}
             onEdit={() => handleEdit(row.id)} onDelete={() => handleDelete(row.id)}
           >
             {{
-              prefix: () => row.menuType === '1' &&
+              prefix: () => row.menuType === '1' && hasAuth('sys:menu:add') &&
                 <NButton
                   type="primary"
                   ghost
@@ -166,6 +169,8 @@ function handleAddChildMenu(id: string) {
           v-model:columns="columnChecks"
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
+          :show-add="hasAuth('sys:menu:add')"
+          :show-delete="hasAuth('sys:menu:delete')"
           @add="handleAdd"
           @delete="handleBatchDelete"
           @refresh="getData"

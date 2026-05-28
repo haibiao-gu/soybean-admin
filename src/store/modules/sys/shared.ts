@@ -15,7 +15,8 @@ export function convertToMenuTree(menu: SysMenuType): MenuTree | null {
   const tree: MenuTree = {
     id: menu.id,
     label: menu.menuName,
-    pId: menu.parentId
+    pId: menu.parentId,
+    permissions: menu.permissions,
   };
 
   // 递归转换子菜单，并过滤掉不符合条件的

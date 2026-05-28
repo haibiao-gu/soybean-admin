@@ -2,6 +2,7 @@
 import OperateButtons from '@/components/advanced/operate-buttons.vue';
 import { statusOptions, yesOrNoOptions } from "@/constants/common";
 import { iconTypeOptions, layoutOptions, menuTypeOptions } from "@/constants/menu";
+import { useAuth } from "@/hooks/business/auth";
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { fetchAllSysMenuPages, fetchInsertSysMenu, fetchSysMenu, fetchUpdateSysMenu } from '@/service/api/sys/menu';
@@ -36,6 +37,7 @@ const visible = defineModel<boolean>('visible', {
   default: false
 });
 
+const { hasAuth } = useAuth()
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
@@ -69,6 +71,7 @@ type Model = Pick<SysMenuParams,
   | 'fixedIndexInTab'
 > & {
   query: { key: string, value: string }[];
+  permissions: { key: string, value: string }[];
   layout: string | null;
   page: string | null;
   pathParam: string | null;
@@ -97,6 +100,7 @@ function createDefaultModel(): Model {
     multiTab: 'N', // 是否支持多标签（0:否 1:是）
     fixedIndexInTab: null, // 在tab中的固定索引
     query: [],
+    permissions: [],
     layout: null,
     page: null,
     pathParam: null,
@@ -232,6 +236,11 @@ watch(
     handleUpdateRoutePathByRouteName();
   }
 );
+
+const hasPermission = computed(() => {
+  return props.operateType === 'edit' ? !hasAuth('sys:menu:edit') : !hasAuth('sys:menu:add')
+})
+
 </script>
 
 <template>
@@ -387,6 +396,25 @@ watch(
               clearable
             />
           </NFormItemGi>
+          <NFormItemGi :label="$t('权限')" span="24">
+            <NDynamicInput
+              v-model:value="model.permissions"
+              :key-placeholder="$t('权限编码')"
+              :value-placeholder="$t('权限描述')"
+              preset="pair"
+            >
+              <template #action="{ index, create, remove }">
+                <NSpace class="ml-12px">
+                  <NButton size="medium" @click="() => create(index)">
+                    <icon-ic-round-plus class="text-icon" />
+                  </NButton>
+                  <NButton size="medium" @click="() => remove(index)">
+                    <icon-ic-round-remove class="text-icon" />
+                  </NButton>
+                </NSpace>
+              </template>
+            </NDynamicInput>
+          </NFormItemGi>
           <NFormItemGi :label="$t('路由参数')" span="24">
             <NDynamicInput
               v-model:value="model.query"
@@ -410,7 +438,7 @@ watch(
       </NForm>
     </NScrollbar>
     <template #footer>
-      <OperateButtons @cancel="closeOperate" @confirm="handleSubmit" />
+      <OperateButtons :hide-confirm="hasPermission" @cancel="closeOperate" @confirm="handleSubmit" />
     </template>
   </NModal>
 </template>

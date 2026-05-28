@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
 import TableColumnOperation from '@/components/advanced/table-column-operation.vue';
+import { useAuth } from "@/hooks/business/auth";
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
 import { fetchDeleteSysRole, fetchSysRolePage } from '@/service/api/sys/role';
@@ -10,6 +11,7 @@ import { reactive } from 'vue';
 import SysRoleOperate from './modules/sys-role-operate.vue';
 import SysRoleSearch from './modules/sys-role-search.vue';
 
+const { hasAuth } = useAuth()
 const appStore = useAppStore();
 
 const paginatingParams = reactive<Api.Common.PaginatingParams>({
@@ -73,7 +75,12 @@ const { columns, columnChecks, data: tableData, getData, getDataByPage, loading,
         align: 'center',
         width: 130,
         render: row => (
-          <TableColumnOperation showEdit showDelete onEdit={() => edit(row.id)} onDelete={() => handleDelete(row.id)} />
+          <TableColumnOperation
+            showEdit
+            showDelete={hasAuth('sys:role:delete')}
+            onEdit={() => edit(row.id)}
+            onDelete={() => handleDelete(row.id)}
+          />
         )
       }
     ]
@@ -118,6 +125,8 @@ function edit(id: string) {
           v-model:columns="columnChecks"
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
+          :show-add="hasAuth('sys:role:add')"
+          :show-delete="hasAuth('sys:role:delete')"
           @add="handleAdd"
           @delete="handleBatchDelete"
           @refresh="getData"

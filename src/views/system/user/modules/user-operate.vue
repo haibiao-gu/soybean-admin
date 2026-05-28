@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import OperateButtons from '@/components/advanced/operate-buttons.vue';
 import { statusOptions } from '@/constants/common';
+import { useAuth } from "@/hooks/business/auth";
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { fetchInsertSysUser, fetchSysUser, fetchUpdateSysUser } from '@/service/api/sys/user';
@@ -32,6 +33,7 @@ const visible = defineModel<boolean>('visible', {
   default: false
 });
 
+const { hasAuth } = useAuth()
 const sysStore = useSysStore()
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
@@ -123,6 +125,10 @@ watch(visible, () => {
 
 const changePasswordVisible = ref<boolean>(false);
 
+const hasPermission = computed(() => {
+  return props.operateType === 'edit' ? !hasAuth('sys:user:edit') : !hasAuth('sys:user:add')
+})
+
 </script>
 
 <template>
@@ -163,7 +169,7 @@ const changePasswordVisible = ref<boolean>(false);
       </NFormItem>
     </NForm>
     <template #footer>
-      <OperateButtons @cancel="closeOperate" @confirm="handleSubmit" />
+      <OperateButtons :hide-confirm="hasPermission" @cancel="closeOperate" @confirm="handleSubmit" />
     </template>
     <UserChangePassword v-model:visible="changePasswordVisible" :user-id="model.id" />
   </NModal>
