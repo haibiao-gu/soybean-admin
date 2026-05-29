@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import { $t } from '@/locales';
+import { getAuthorization } from "@/service/request/shared";
+import { getServiceBaseURL } from "@/utils/service";
+import { computed } from 'vue'
 
 defineOptions({
   name: 'TableHeaderOperation'
@@ -14,13 +17,16 @@ interface Props {
   enableDragSort?: boolean;
 
   showExport?: boolean;
+  showImport?: boolean;
   showAdd?: boolean;
   showDelete?: boolean;
+  importUrl?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   enableDragSort: false,
-  showExport: false
+  showExport: false,
+  showImport: false
 });
 
 interface Emits {
@@ -33,6 +39,8 @@ interface Emits {
   (e: 'update:enableDragSort', value: boolean): void;
 
   (e: 'export'): void;
+
+  (e: 'uploaded'): void;
 }
 
 const emit = defineEmits<Emits>();
@@ -40,6 +48,20 @@ const emit = defineEmits<Emits>();
 const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
   default: () => []
 });
+
+const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
+const { baseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
+
+const headers = computed(() => {
+  const Authorization = getAuthorization();
+  const result: Record<string, string> = {};
+
+  if (Authorization) {
+    result.Authorization = Authorization;
+  }
+
+  return result;
+})
 
 function add() {
   emit('add');
@@ -59,6 +81,10 @@ function toggleDragSort() {
 
 function handleExport() {
   emit('export');
+}
+
+function handleUploaded() {
+  emit('uploaded');
 }
 </script>
 
@@ -83,6 +109,14 @@ function handleExport() {
         </template>
         {{ $t('common.confirmDelete') }}
       </NPopconfirm>
+      <NUpload v-if="showImport" :action="baseURL+importUrl" :headers="headers" :show-file-list="false" @finish="handleUploaded">
+        <NButton size="small">
+          <template #icon>
+            <icon-mdi-upload class="text-icon" />
+          </template>
+          {{ $t('导入Excel') }}
+        </NButton>
+      </NUpload>
       <NButton v-if="showExport" size="small" @click="handleExport">
         <template #icon>
           <icon-mdi-microsoft-excel class="text-icon" />
@@ -105,3 +139,4 @@ function handleExport() {
 </template>
 
 <style scoped></style>
+

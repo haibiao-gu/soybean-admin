@@ -171,7 +171,7 @@ const hasPermission = computed(() => {
     <template #footer>
       <OperateButtons :hide-confirm="hasPermission" @cancel="closeOperate" @confirm="handleSubmit" />
     </template>
-    <UserChangePassword v-model:visible="changePasswordVisible" :user-id="model.id" />
+    <UserChangePassword v-if="hasAuth('sys:user:resetPassword')" v-model:visible="changePasswordVisible" :user-id="model.id" />
   </NModal>
 </template>
 

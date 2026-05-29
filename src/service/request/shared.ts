@@ -127,3 +127,58 @@ export function showErrorMsg(state: RequestInstanceState, message: string) {
     });
   }
 }
+
+export function handleDownloadError(state: RequestInstanceState, error: any) {
+  let message = '下载失败';
+
+  if (error.response?.data) {
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const errorData = JSON.parse(reader.result as string);
+          message = errorData.msg || errorData.message || message;
+          showErrorMsg(state, message);
+        } catch {
+          showErrorMsg(state, message);
+        }
+      };
+      reader.onerror = () => {
+        showErrorMsg(state, message);
+      };
+      reader.readAsText(error.response.data);
+      return;
+    } catch {
+    }
+  }
+
+  if (error.message) {
+    message = error.message;
+  }
+
+  showErrorMsg(state, message);
+}
+
+export function downloadFile(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
+
+export function getFilenameFromHeaders(headers: any, defaultFilename = 'download'): string {
+  const contentDisposition = headers['content-disposition'];
+  if (contentDisposition) {
+    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+    const matches = filenameRegex.exec(contentDisposition);
+    if (matches != null && matches[1]) {
+      return decodeURIComponent(matches[1].replace(/['"]/g, ''));
+    }
+  }
+  return defaultFilename;
+}
+

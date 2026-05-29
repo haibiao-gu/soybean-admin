@@ -1,25 +1,18 @@
-import { computed, nextTick, ref, shallowRef } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
-import { defineStore } from 'pinia';
-import { useBoolean } from '@sa/hooks';
-import type { CustomRoute, ElegantConstRoute, LastLevelRouteKey, RouteKey, RouteMap } from '@elegant-router/types';
-import { router } from '@/router';
-import { fetchGetConstantRoutes, fetchGetUserRoutes, fetchIsRouteExist } from '@/service/api';
 import { SetupStoreId } from '@/enum';
+import { router } from '@/router';
+import { getRouteName, getRoutePath } from '@/router/elegant/transform';
 import { createStaticRoutes, getAuthVueRoutes } from '@/router/routes';
 import { ROOT_ROUTE } from '@/router/routes/builtin';
-import { getRouteName, getRoutePath } from '@/router/elegant/transform';
+import { fetchGetConstantRoutes, fetchGetUserRoutes, fetchIsRouteExist } from '@/service/api';
+import type { CustomRoute, ElegantConstRoute, LastLevelRouteKey, RouteKey, RouteMap } from '@elegant-router/types';
+import { useBoolean } from '@sa/hooks';
+import { defineStore } from 'pinia';
+import { computed, nextTick, ref, shallowRef } from 'vue';
+import type { RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '../auth';
 import { useTabStore } from '../tab';
 import {
-  filterAuthRoutesByRoles,
-  getBreadcrumbsByRoute,
-  getCacheRouteNames,
-  getGlobalMenusByAuthRoutes,
-  getSelectedMenuKeyPathByKey,
-  isRouteExistByRouteName,
-  sortRoutesByOrder,
-  transformMenuToSearchMenus,
+  filterAuthRoutesByRoles, getBreadcrumbsByRoute, getCacheRouteNames, getGlobalMenusByAuthRoutes, getSelectedMenuKeyPathByKey, isRouteExistByRouteName, sortRoutesByOrder, transformMenuToSearchMenus,
   updateLocaleOfGlobalMenus
 } from './shared';
 
@@ -177,7 +170,7 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
   /** Init auth route */
   async function initAuthRoute() {
     // check if user info is initialized
-    if (!authStore.userInfo.userId) {
+    if (!authStore.userInfo.nickname) {
       await authStore.initUserInfo();
     }
 
