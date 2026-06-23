@@ -5,7 +5,7 @@ import { menuTypeRecord, menuTypeTagMapRecord } from "@/constants/menu";
 import { useAuth } from "@/hooks/business/auth";
 import { useNaiveTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
-import { fetchDeleteSysMenu, fetchSysMenuTree } from '@/service/api/sys/menu';
+import { fetchDeleteSysMenu, fetchExportSysMenu, fetchSysMenuTree } from '@/service/api/sys/menu';
 import { useAppStore } from '@/store/modules/app';
 import { useBoolean } from "@sa/hooks";
 import { ref } from "vue";
@@ -153,6 +153,10 @@ function handleEdit(id: string) {
   openOperate();
 }
 
+async function handleExport() {
+  await fetchExportSysMenu({}, {})
+}
+
 function handleAddChildMenu(id: string) {
   operateType.value = 'addChild';
   rowId.value = id
@@ -171,9 +175,14 @@ function handleAddChildMenu(id: string) {
           :loading="loading"
           :show-add="hasAuth('sys:menu:add')"
           :show-delete="hasAuth('sys:menu:delete')"
+          :show-export="hasAuth('sys:menu:export')"
+          :show-import="hasAuth('sys:menu:import')"
+          import-url="/sys/menu/import"
           @add="handleAdd"
           @delete="handleBatchDelete"
+          @export="handleExport"
           @refresh="getData"
+          @uploaded="getData"
         />
       </template>
       <NDataTable

@@ -1,4 +1,5 @@
 import type { SysMenuParams, SysMenuSortParams, SysMenuType } from '@/typings/sys/menu';
+import { FileDownloader } from "@/utils/download";
 import { request } from '../../request';
 
 export function fetchSysMenuPage(
@@ -27,6 +28,13 @@ export function fetchSysMenuList(
     },
     data
   });
+}
+
+export function fetchExportSysMenu(
+  data: SysMenuParams,
+  sort: SysMenuSortParams
+) {
+  return FileDownloader.downloadAndSave('/sys/menu/export', sort, data);
 }
 
 export function fetchSysMenu(id: string) {

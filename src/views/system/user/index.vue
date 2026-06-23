@@ -4,7 +4,7 @@ import { statusRecord, statusTagMapRecord } from '@/constants/common';
 import { useAuth } from "@/hooks/business/auth";
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
-import { fetchDeleteSysUser, fetchSysUserPage } from '@/service/api/sys/user';
+import { fetchDeleteSysUser, fetchExportSysUser, fetchSysUserPage } from '@/service/api/sys/user';
 import { useAppStore } from '@/store/modules/app';
 import { useSysStore } from "@/store/modules/sys";
 import type { UserInfoParams, UserInfoSortParams } from '@/typings/sys/user';
@@ -145,6 +145,11 @@ async function handleDelete(id: string) {
 function edit(id: string) {
   handleEdit(id);
 }
+
+async function handleExport() {
+  await fetchExportSysUser(searchParams, sortParams)
+}
+
 </script>
 
 <template>
@@ -158,9 +163,14 @@ function edit(id: string) {
           :loading="loading"
           :show-add="hasAuth('sys:user:add')"
           :show-delete="hasAuth('sys:user:delete')"
+          :show-export="hasAuth('sys:user:export')"
+          :show-import="hasAuth('sys:user:import')"
+          import-url="/sys/user/import"
           @add="handleAdd"
           @delete="handleBatchDelete"
+          @export="handleExport"
           @refresh="getData"
+          @uploaded="getData"
         />
       </template>
       <NDataTable

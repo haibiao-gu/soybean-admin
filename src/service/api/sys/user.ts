@@ -1,4 +1,5 @@
 import type { UserInfoParams, UserInfoSortParams, UserInfoType } from '@/typings/sys/user';
+import { FileDownloader } from "@/utils/download";
 import { request } from '../../request';
 
 export function fetchSysUserPage(
@@ -14,6 +15,13 @@ export function fetchSysUserPage(
     },
     data
   });
+}
+
+export function fetchExportSysUser(
+  data: UserInfoParams,
+  sort: UserInfoSortParams
+) {
+  return FileDownloader.downloadAndSave('/sys/user/export', sort, data);
 }
 
 export function fetchSysUser(id: string) {

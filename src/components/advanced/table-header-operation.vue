@@ -2,6 +2,7 @@
 import { $t } from '@/locales';
 import { getAuthorization } from "@/service/request/shared";
 import { getServiceBaseURL } from "@/utils/service";
+import type { UploadFileInfo } from 'naive-ui'
 import { computed } from 'vue'
 
 defineOptions({
@@ -83,8 +84,19 @@ function handleExport() {
   emit('export');
 }
 
-function handleUploaded() {
-  emit('uploaded');
+function handleUploaded(options: { file: UploadFileInfo, event?: ProgressEvent }) {
+  const target = options.event?.target
+  if (target) {
+    const { status, response } = target as XMLHttpRequest;
+    if (status === 200 && response) {
+      const res = JSON.parse(response)
+      if (res.code === 200) {
+        emit('uploaded');
+      } else {
+        window.$message?.error(res.msg);
+      }
+    }
+  }
 }
 </script>
 

@@ -56,3 +56,26 @@ export function toggleHtmlClass(className: string) {
     remove
   };
 }
+
+/**
+ * 在输入元素的光标位置插入文本
+ *
+ * @param inputElement - 本地输入元素
+ * @param text - 插入文本
+ * @param currentValue - 输入的当前值
+ * @returns 新值中插入光标位置的文本
+ */
+export function insertTextAtCursor(inputElement: HTMLInputElement, text: string, currentValue: string): string {
+  const start = inputElement.selectionStart || 0;
+  const end = inputElement.selectionEnd || 0;
+
+  const newValue = currentValue.substring(0, start) + text + currentValue.substring(end);
+
+  setTimeout(() => {
+    inputElement.focus();
+    const newPosition = start + text.length;
+    inputElement.setSelectionRange(newPosition, newPosition);
+  }, 0);
+
+  return newValue;
+}

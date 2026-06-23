@@ -3,7 +3,7 @@ import TableColumnOperation from '@/components/advanced/table-column-operation.v
 import { useAuth } from "@/hooks/business/auth";
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { $t } from '@/locales';
-import { fetchDeleteSysRole, fetchSysRolePage } from '@/service/api/sys/role';
+import { fetchDeleteSysRole, fetchExportSysRole, fetchSysRolePage } from '@/service/api/sys/role';
 import { useAppStore } from '@/store/modules/app';
 import type { SysRoleParams, SysRoleSortParams } from '@/typings/sys/role';
 import type { DataTableSortState } from 'naive-ui';
@@ -114,6 +114,11 @@ async function handleDelete(id: string) {
 function edit(id: string) {
   handleEdit(id);
 }
+
+async function handleExport() {
+  await fetchExportSysRole(searchParams, sortParams)
+}
+
 </script>
 
 <template>
@@ -127,9 +132,14 @@ function edit(id: string) {
           :loading="loading"
           :show-add="hasAuth('sys:role:add')"
           :show-delete="hasAuth('sys:role:delete')"
+          :show-export="hasAuth('sys:role:export')"
+          :show-import="hasAuth('sys:role:import')"
+          import-url="/sys/role/import"
           @add="handleAdd"
           @delete="handleBatchDelete"
+          @export="handleExport"
           @refresh="getData"
+          @uploaded="getData"
         />
       </template>
       <NDataTable

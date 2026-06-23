@@ -1,4 +1,5 @@
 import type { SysRoleParams, SysRoleSortParams, SysRoleType } from '@/typings/sys/role';
+import { FileDownloader } from "@/utils/download";
 import { request } from '../../request';
 
 export function fetchSysRolePage(
@@ -27,6 +28,13 @@ export function fetchSysRoleList(
     },
     data
   });
+}
+
+export function fetchExportSysRole(
+  data: SysRoleParams,
+  sort: SysRoleSortParams
+) {
+  return FileDownloader.downloadAndSave('/sys/role/export', sort, data);
 }
 
 export function fetchSysRole(id: string) {
