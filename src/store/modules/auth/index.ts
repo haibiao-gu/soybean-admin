@@ -9,7 +9,7 @@ import { computed, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
-import { clearAuthStorage, getToken } from './shared';
+import { clearAuthStorage, getToken, setToken } from './shared';
 
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const route = useRoute();
@@ -45,7 +45,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
     clearAuthStorage();
 
-    authStore.$reset();
+    token.value = '';
+    Object.assign(userInfo, { avatar: '', nickname: '', phone: '', roles: [], permissions: [] });
 
     if (!route.meta.constant) {
       await toLogin();
@@ -130,20 +131,20 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function loginByToken(loginToken: Api.Auth.LoginToken) {
-    // 1. stored in the localStorage, the later requests need it in headers
-    localStg.set('token', loginToken.token);
-    localStg.set('refreshToken', loginToken.refreshToken);
+    // stored encrypted in localStorage, the later requests need it in headers
+    await setToken(loginToken.token);
+    // set reactive token before getUserInfo so Authorization header can be attached
+    token.value = loginToken.token;
 
-    // 2. get user info
+    // get user info
     const pass = await getUserInfo();
 
-    if (pass) {
-      token.value = loginToken.token;
-
-      return true;
+    if (!pass) {
+      token.value = '';
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   async function getUserInfo() {
@@ -160,7 +161,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function initUserInfo() {
-    const maybeToken = getToken();
+    const maybeToken = await getToken();
 
     if (maybeToken) {
       token.value = maybeToken;

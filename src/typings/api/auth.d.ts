@@ -7,7 +7,7 @@ declare namespace Api {
   namespace Auth {
     interface LoginToken {
       token: string;
-      refreshToken: string;
+      expire: number;
     }
 
     interface UserInfo {

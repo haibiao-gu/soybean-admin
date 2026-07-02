@@ -158,12 +158,18 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
     if (authRouteMode.value === 'static') {
       addConstantRoutes(staticRoute.constantRoutes);
     } else {
-      const { data, error } = await fetchGetConstantRoutes();
+      try {
+        const { data, error } = await fetchGetConstantRoutes();
 
-      if (!error) {
-        addConstantRoutes(data);
-      } else {
-        // if fetch constant routes failed, use static constant routes
+        if (!error) {
+          addConstantRoutes(data);
+        } else {
+          // if fetch constant routes failed, use static constant routes
+          addConstantRoutes(staticRoute.constantRoutes);
+        }
+      } catch {
+        // network error or exception → fallback to static constant routes
+        console.error('[RouteStore] fetchGetConstantRoutes threw an exception, using static fallback');
         addConstantRoutes(staticRoute.constantRoutes);
       }
     }
@@ -254,6 +260,10 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
    */
   function addRoutesToVueRouter(routes: RouteRecordRaw[]) {
     routes.forEach(route => {
+      // Skip if the route already exists in vue-router (e.g. login builtin)
+      if (route.name && router.hasRoute(route.name)) {
+        return;
+      }
       const removeFn = router.addRoute(route);
       addRemoveRouteFn(removeFn);
     });

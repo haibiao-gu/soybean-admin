@@ -4,6 +4,7 @@ import { AdminLayout, LAYOUT_SCROLL_EL_ID } from '@sa/materials';
 import type { LayoutMode } from '@sa/materials';
 import { useAppStore } from '@/store/modules/app';
 import { useThemeStore } from '@/store/modules/theme';
+import ErrorBoundary from '@/components/common/ErrorBoundary.vue';
 import GlobalHeader from '../modules/global-header/index.vue';
 import GlobalSider from '../modules/global-sider/index.vue';
 import GlobalTab from '../modules/global-tab/index.vue';
@@ -138,7 +139,9 @@ function getSiderAndCollapsedWidth(isCollapsed: boolean) {
     :right-footer="themeStore.footer.right"
   >
     <template #header>
-      <GlobalHeader v-bind="headerProps" />
+      <ErrorBoundary>
+        <GlobalHeader v-bind="headerProps" />
+      </ErrorBoundary>
     </template>
     <template #tab>
       <GlobalTab />
@@ -146,8 +149,10 @@ function getSiderAndCollapsedWidth(isCollapsed: boolean) {
     <template #sider>
       <GlobalSider />
     </template>
-    <GlobalMenu />
-    <GlobalContent />
+    <ErrorBoundary>
+      <GlobalMenu />
+      <GlobalContent />
+    </ErrorBoundary>
     <ThemeDrawer />
     <template #footer>
       <GlobalFooter />

@@ -50,7 +50,7 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { error } = await fetchChangePassword(model.value.oldPassword, model.value.newPassword);
+  const { error } = await fetchChangePassword(model.value.oldPassword, model.value.newPassword, authStore.userInfo.phone);
   if (error) return;
   window.$message?.success($t('common.modifySuccess'));
   authStore.resetStore()

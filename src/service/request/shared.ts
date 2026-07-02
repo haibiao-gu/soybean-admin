@@ -1,6 +1,7 @@
 import { fetchRefreshToken } from '@/service/api/auth';
 import { useAuthStore } from '@/store/modules/auth';
 import { localStg } from '@/utils/storage';
+import { encryptToken } from '@sa/utils';
 import type { RequestInstanceState } from './type';
 
 const ACTIVITY_INTERVAL = 10 * 60 * 1000;
@@ -69,7 +70,8 @@ function notifyListeners(isActivity: boolean) {
 }
 
 export function getAuthorization() {
-  const token = localStg.get('token');
+  const authStore = useAuthStore();
+  const token = authStore.token;
   const Authorization = token ? `Bearer ${token}` : null;
 
   return Authorization;
@@ -82,8 +84,8 @@ async function handleRefreshToken() {
   const rToken = localStg.get('refreshToken') || '';
   const { error, data } = await fetchRefreshToken(rToken);
   if (!error) {
-    localStg.set('token', data.token);
-    localStg.set('refreshToken', data.refreshToken);
+    const encryptedToken = await encryptToken(data.token);
+    localStg.set('token', encryptedToken);
     return true;
   }
 
@@ -149,6 +151,7 @@ export function handleDownloadError(state: RequestInstanceState, error: any) {
       reader.readAsText(error.response.data);
       return;
     } catch {
+      // ignore parse error
     }
   }
 

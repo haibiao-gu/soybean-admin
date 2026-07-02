@@ -12,6 +12,19 @@ export const ROOT_ROUTE: CustomRoute = {
   }
 };
 
+const LOGIN_ROUTE: CustomRoute = {
+  name: 'login',
+  path: '/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?',
+  component: 'layout.blank$view.login',
+  props: true,
+  meta: {
+    title: 'login',
+    i18nKey: 'route.login',
+    constant: true,
+    hideInMenu: true
+  }
+};
+
 const NOT_FOUND_ROUTE: CustomRoute = {
   name: 'not-found',
   path: '/:pathMatch(.*)*',
@@ -23,7 +36,7 @@ const NOT_FOUND_ROUTE: CustomRoute = {
 };
 
 /** builtin routes, it must be constant and setup in vue-router */
-const builtinRoutes: CustomRoute[] = [ROOT_ROUTE, NOT_FOUND_ROUTE];
+const builtinRoutes: CustomRoute[] = [ROOT_ROUTE, LOGIN_ROUTE, NOT_FOUND_ROUTE];
 
 /** create builtin vue routes */
 export function createBuiltinVueRoutes() {

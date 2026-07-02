@@ -162,7 +162,7 @@ const hasPermission = computed(() => {
           <NRadioGroup v-model:value="model.status" name="status">
             <NRadioButton v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </NRadioGroup>
-          <NButton @click="changePasswordVisible=true">
+          <NButton v-if="hasAuth('sys:user:resetPassword')" @click="changePasswordVisible=true">
             {{ $t('修改密码') }}
           </NButton>
         </NFlex>
