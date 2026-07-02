@@ -1,7 +1,7 @@
-import type { SysConfigType } from '@/typings/sys/config';
+import { SysConfigGroupType, SysConfigType } from '@/typings/sys/config';
 import { request } from '../../request';
 
-export function fetchConfigByGroup(group: string) {
+export function fetchConfigByGroup(group: SysConfigGroupType) {
   return request<SysConfigType[]>({
     url: '/sys/config/getByGroup',
     params: { group }

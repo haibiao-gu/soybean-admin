@@ -1,4 +1,4 @@
-import type { SysConfigType } from '@/typings/sys/config';
+import { SysConfigGroupType, SysConfigType } from '@/typings/sys/config';
 
 export function configMapToForm<T extends object>(list: SysConfigType[], form: T) {
   list.forEach(item => {
@@ -9,7 +9,7 @@ export function configMapToForm<T extends object>(list: SysConfigType[], form: T
   });
 }
 
-export function configMapToSaveList<T extends object>(form: T, configGroup: string): SysConfigType[] {
+export function configMapToSaveList<T extends object>(form: T, configGroup: SysConfigGroupType): SysConfigType[] {
   return Object.entries(form).map(([key, value]) => ({
     id: '',
     configGroup,
