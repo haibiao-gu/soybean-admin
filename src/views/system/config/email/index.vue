@@ -65,46 +65,48 @@ onMounted(() => loadConfig());
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard :bordered="false" class="card-wrapper sm:flex-1-hidden" size="small" title="邮箱配置">
+    <NCard :bordered="false" :title="$t('邮箱配置')" class="card-wrapper sm:flex-1-hidden" size="small">
       <template #header-extra>
-        <NButton :loading="saving" type="primary" @click="saveConfig">保存配置</NButton>
+        <NButton :loading="saving" type="primary" @click="saveConfig">
+          {{ $t('保存配置') }}
+        </NButton>
       </template>
       <NSpin :show="loading">
         <NForm :model="form" label-placement="left" label-width="140">
           <NGrid :cols="2" :x-gap="24" responsive="screen">
             <NGi>
-              <NFormItem label="SMTP服务器地址" required>
-                <NInput v-model:value="form.host" placeholder="如 smtp.qq.com" />
+              <NFormItem :label="$t('SMTP服务器地址')" required>
+                <NInput v-model:value="form.host" :placeholder="$t('如 smtp.qq.com')" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="SMTP端口">
-                <NInput v-model:value="form.port" placeholder="25" />
+              <NFormItem :label="$t('SMTP端口')">
+                <NInput v-model:value="form.port" :placeholder="$t('25')" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="用户名">
-                <NInput v-model:value="form.username" placeholder="邮箱账号" />
+              <NFormItem :label="$t('用户名')">
+                <NInput v-model:value="form.username" :placeholder="$t('邮箱账号')" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="密码/授权码">
-                <NInput v-model:value="form.password" placeholder="邮箱密码或授权码" show-password-on="click" type="password" />
+              <NFormItem :label="$t('密码/授权码')">
+                <NInput v-model:value="form.password" :placeholder="$t('邮箱密码或授权码')" show-password-on="click" type="password" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="SMTP认证">
+              <NFormItem :label="$t('SMTP认证')">
                 <NSwitch v-model:value="form.smtp_auth" checked-value="true" unchecked-value="false" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="STARTTLS">
+              <NFormItem :label="$t('STARTTLS')">
                 <NSwitch v-model:value="form.starttls_enable" checked-value="true" unchecked-value="false" />
               </NFormItem>
             </NGi>
             <NGi>
-              <NFormItem label="发件人地址" required>
-                <NInput v-model:value="form.from" placeholder="如 noreply@example.com" />
+              <NFormItem :label="$t('发件人地址')" required>
+                <NInput v-model:value="form.from" :placeholder="$t('如 noreply@example.com')" />
               </NFormItem>
             </NGi>
           </NGrid>
@@ -114,7 +116,9 @@ onMounted(() => loadConfig());
         </NDivider>
         <NSpace align="center">
           <NInput v-model:value="testTo" :placeholder="$t('请输入测试收件邮箱')" style="width: 300px" />
-          <NButton :loading="testing" type="primary" @click="testMailConfig">{{ $t('发送测试邮件') }}</NButton>
+          <NButton :loading="testing" type="primary" @click="testMailConfig">
+            {{ $t('发送测试邮件') }}
+          </NButton>
         </NSpace>
       </NSpin>
     </NCard>

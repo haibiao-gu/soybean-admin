@@ -66,15 +66,17 @@ onMounted(() => loadConfig());
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard :bordered="false" class="card-wrapper sm:flex-1-hidden" size="small" title="上传配置">
+    <NCard :bordered="false" :title="$t('上传配置')" class="card-wrapper sm:flex-1-hidden" size="small">
       <template #header-extra>
-        <NButton :loading="saving" type="primary" @click="saveConfig">保存配置</NButton>
+        <NButton :loading="saving" type="primary" @click="saveConfig">
+          {{ $t('保存配置') }}
+        </NButton>
       </template>
       <NSpin :show="loading">
         <NForm :model="form" label-placement="left" label-width="140">
           <NGrid :cols="2" :x-gap="24" responsive="screen">
             <NGi :span="2">
-              <NFormItem label="存储类型" required>
+              <NFormItem :label="$t('存储类型')" required>
                 <NRadioGroup v-model:value="form.store_type">
                   <NRadio v-for="opt in storeTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
                 </NRadioGroup>
@@ -83,36 +85,36 @@ onMounted(() => loadConfig());
 
             <!-- 本地存储 -->
             <NGi v-if="!isMinio" :span="2">
-              <NFormItem label="上传目录" required>
-                <NInput v-model:value="form.local_dir" placeholder="如 /data/upload" />
+              <NFormItem :label="$t('上传目录')" required>
+                <NInput v-model:value="form.local_dir" :placeholder="$t('如 /data/upload')" />
               </NFormItem>
             </NGi>
 
             <!-- MinIO -->
             <template v-if="isMinio">
               <NGi>
-                <NFormItem label="MinIO地址" required>
-                  <NInput v-model:value="form.minio_endpoint" placeholder="如 http://localhost:9000" />
+                <NFormItem :label="$t('MinIO地址')" required>
+                  <NInput v-model:value="form.minio_endpoint" :placeholder="$t('如 http://localhost:9000')" />
                 </NFormItem>
               </NGi>
               <NGi>
-                <NFormItem label="桶名称" required>
-                  <NInput v-model:value="form.minio_bucket_name" placeholder="如 soybean" />
+                <NFormItem :label="$t('桶名称')" required>
+                  <NInput v-model:value="form.minio_bucket_name" :placeholder="$t('如 soybean')" />
                 </NFormItem>
               </NGi>
               <NGi>
-                <NFormItem label="AccessKey" required>
-                  <NInput v-model:value="form.minio_access_key" placeholder="MinIO AccessKey" />
+                <NFormItem :label="$t('AccessKey')" required>
+                  <NInput v-model:value="form.minio_access_key" :placeholder="$t('MinIO AccessKey')" />
                 </NFormItem>
               </NGi>
               <NGi>
-                <NFormItem label="SecretKey" required>
+                <NFormItem :label="$t('SecretKey')" required>
                   <NInput v-model:value="form.minio_secret_key" placeholder="MinIO SecretKey" show-password-on="click" type="password" />
                 </NFormItem>
               </NGi>
               <NGi :span="2">
-                <NFormItem label="公网访问地址">
-                  <NInput v-model:value="form.minio_public_url" placeholder="如 http://public.example.com:9000（可选）" />
+                <NFormItem :label="$t('公网访问地址')">
+                  <NInput v-model:value="form.minio_public_url" :placeholder="$t('如 http://public.example.com:9000（可选）')" />
                 </NFormItem>
               </NGi>
             </template>
@@ -122,8 +124,12 @@ onMounted(() => loadConfig());
           {{ $t('测试连通性') }}
         </NDivider>
         <NSpace align="center">
-          <NButton :loading="testing" type="primary" @click="testUploadConfig">测试连通性</NButton>
-          <NText depth="3">测试当前存储配置是否可用</NText>
+          <NButton :loading="testing" type="primary" @click="testUploadConfig">
+            {{ $t('测试连通性') }}
+          </NButton>
+          <NText depth="3">
+            {{ $t('测试当前存储配置是否可用') }}
+          </NText>
         </NSpace>
       </NSpin>
     </NCard>
