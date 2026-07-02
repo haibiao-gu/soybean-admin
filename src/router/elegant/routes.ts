@@ -85,6 +85,34 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'system_config',
+        path: '/system/config',
+        meta: {
+          title: 'system_config',
+          i18nKey: 'route.system_config'
+        },
+        children: [
+          {
+            name: 'system_config_email',
+            path: '/system/config/email',
+            component: 'view.system_config_email',
+            meta: {
+              title: 'system_config_email',
+              i18nKey: 'route.system_config_email'
+            }
+          },
+          {
+            name: 'system_config_upload',
+            path: '/system/config/upload',
+            component: 'view.system_config_upload',
+            meta: {
+              title: 'system_config_upload',
+              i18nKey: 'route.system_config_upload'
+            }
+          }
+        ]
+      },
+      {
         name: 'system_menu',
         path: '/system/menu',
         component: 'view.system_menu',
